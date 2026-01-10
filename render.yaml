@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: neuralquery
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run_production.py
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: neuralquery-db
+          property: connectionString
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: "5000"
+
+databases:
+  - name: neuralquery-db
+    plan: free
