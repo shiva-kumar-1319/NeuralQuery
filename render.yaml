@@ -22,6 +22,8 @@ services:
         generateValue: true
       - key: PORT
         value: "5000"
+      - key: PYTHON_VERSION
+        value: 3.11.10
 
 databases:
   - name: neuralquery-db
