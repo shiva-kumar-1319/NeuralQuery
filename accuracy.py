@@ -56,11 +56,20 @@ def calculate_accuracy(sources, ai_response):
     # Clamp to reasonable range
     overall_accuracy = max(60, min(98, overall_accuracy))
     
+    # Determine confidence level
+    if overall_accuracy >= 90:
+        confidence_level = "High"
+    elif overall_accuracy >= 75:
+        confidence_level = "Moderate"
+    else:
+        confidence_level = "Low"
+    
     return {
         'overall_accuracy': overall_accuracy,
         'sources_analyzed': sources_count,
         'relevance_score': overlap_score,
-        'citation_score': int(citation_score)
+        'citation_score': int(citation_score),
+        'confidence_level': confidence_level
     }
 
 if __name__ == "__main__":

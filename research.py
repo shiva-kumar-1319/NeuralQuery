@@ -435,9 +435,9 @@ def perform_research(query: str) -> Dict:
         
         print(f"\n{'='*50}")
         print(f"✅ Research complete!")
-        print(f"   Accuracy: {accuracy_metrics['overall_accuracy']}%")
-        print(f"   Confidence: {accuracy_metrics['confidence_level']}")
-        print(f"   Sources: {accuracy_metrics['sources_analyzed']}")
+        print(f"   Accuracy: {accuracy_metrics.get('overall_accuracy', 0)}%")
+        print(f"   Confidence: {accuracy_metrics.get('confidence_level', 'N/A')}")
+        print(f"   Sources: {accuracy_metrics.get('sources_analyzed', 0)}")
         print(f"{'='*50}\n")
         
         return {
