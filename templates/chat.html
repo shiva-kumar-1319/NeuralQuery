@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - NeuralQuery AI Assistant</title>
+    <meta name="description"
+        content="Engage with NeuralQuery, your AI research assistant. Get deep insights and synthesized answers from the web.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/chat.css">
+</head>
+
+<body>
+    <!-- Main Container -->
+    <div class="chat-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo"
+                    style="padding: 0 0.5rem 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1rem; display: flex; align-items: center;">
+                    <img src="/static/img/logo.png" alt="NeuralQuery" style="height: 32px; vertical-align: middle;">
+                    <span style="font-weight: 700; margin-left: 0.5rem; color: var(--text-primary);">NeuralQuery</span>
+                </div>
+                <button class="btn-new-chat" id="newChatBtn">
+                    <span class="icon">+</span> New Chat
+                </button>
+            </div>
+
+            <div class="sidebar-search">
+                <input type="text" id="searchChats" placeholder="Search chats..." class="search-input">
+            </div>
+
+
+            <div class="conversation-list" id="conversationList">
+                <!-- Conversations will be loaded here -->
+                <div class="loading-conversations">
+                    <div class="spinner-small"></div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-menu-item" id="userProfile">
+                    <div class="user-avatar-small" id="userAvatar">U</div>
+                    <div class="user-name" id="userName">User</div>
+                </div>
+
+                <div class="sidebar-menu-item" id="logoutBtn">
+                    <span class="icon">🚪</span> Log out
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <div class="chat-messages-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message (shown when no conversation) -->
+                    <div class="welcome-message" id="welcomeMessage">
+                        <h1>NeuralQuery</h1>
+
+                        <div class="examples-grid">
+                            <div class="example-column">
+                                <h3>Examples</h3>
+                                <button class="example-btn" data-query="Explain quantum computing in simple terms">
+                                    "Explain quantum computing in simple terms" →
+                                </button>
+                                <button class="example-btn"
+                                    data-query="Got any creative ideas for a 10 year old's birthday?">
+                                    "Got any creative ideas for a 10 year old's birthday?" →
+                                </button>
+                                <button class="example-btn" data-query="How do I make an HTTP request in Javascript?">
+                                    "How do I make an HTTP request in Javascript?" →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <button class="btn-attachment" id="uploadBtn" title="Upload file">
+                        +
+                    </button>
+                    <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                    <textarea id="messageInput" placeholder="Send a message..." rows="1"></textarea>
+                    <button class="btn-send" id="sendBtn" disabled>
+                        ➤
+                    </button>
+                </div>
+                <div class="input-hint">
+                    NeuralQuery can make mistakes. Consider checking important information.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div style="text-align: center; color: white;">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+
+
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>

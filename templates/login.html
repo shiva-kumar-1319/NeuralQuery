@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NeuralQuery AI Research Assistant</title>
+    <meta name="description"
+        content="Login to your NeuralQuery account to continue your AI-powered research and analysis.">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #FFFFFF;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: var(--space-lg);
+        }
+
+        .auth-card {
+            background: #FFFFFF;
+            padding: var(--space-2xl);
+            /* Remove heavy shadow for cleaner look, or keep subtle */
+            /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); */
+            border: 1px solid var(--border-color);
+            /* Add border instead */
+        }
+
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .auth-header h1 {
+            font-size: var(--text-3xl);
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-lg);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .auth-footer p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        #loading {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo"><img src="/static/img/logo.png" alt="NeuralQuery" style="height: 80px;"></div>
+                <h1>Welcome Back</h1>
+                <p>Login to continue your research</p>
+            </div>
+
+            <div id="alert-container"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="you@example.com" required
+                        autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="••••••••" required
+                        autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full btn-lg">
+                    <span id="btn-text">Login</span>
+                    <span id="loading" class="spinner"></span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/register">Sign up</a></p>
+                <p style="margin-top: var(--space-sm);"><a href="/">← Back to Home</a></p>
+            </div>
+
+            <div
+                style="margin-top: var(--space-xl); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md); text-align: center;">
+                <p style="font-size: var(--text-sm); color: var(--text-secondary); margin-bottom: 0;">
+                    <strong>Test Account:</strong><br>
+                    Email: user1@test.com<br>
+                    Password: test123
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login Form Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btnText = document.getElementById('btn-text');
+            const loading = document.getElementById('loading');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+
+            // Show loading state
+            btnText.style.display = 'none';
+            loading.style.display = 'inline-block';
+            submitBtn.disabled = true;
+
+            // Clear previous alerts
+            document.getElementById('alert-container').innerHTML = '';
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Save token to localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Show success message
+                    showAlert('Login successful!', 'success');
+
+                    // Redirect to chat
+                    // Using replace to prevent back button from returning to login
+                    console.log('Redirecting to /chat...');
+                    window.location.replace('/chat');
+                } else {
+                    showAlert(data.error || 'Login failed', 'error');
+                    resetButton();
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('An error occurred. Please try again.', 'error');
+                resetButton();
+            }
+
+            function resetButton() {
+                btnText.style.display = 'inline';
+                loading.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            alertContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        // Auto-focus email field
+        document.getElementById('email').focus();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - NeuralQuery</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .user-table th,
+        .user-table td {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .user-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            background: var(--message-user-bg);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pill {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--sidebar-hover);
+        }
+    </style>
+</head>
+
+<body style="background: var(--sidebar-hover);">
+    <div class="admin-container">
+        <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700;">Admin Dashboard</h1>
+                <p style="color: var(--text-secondary);">Manage users and monitor activity</p>
+            </div>
+            <a href="/chat" class="btn-new-chat" style="width: auto; text-decoration: none;">← Back to Chat</a>
+        </header>
+
+        <div class="admin-card">
+            <h2 style="margin-bottom: 1.5rem;">Registered Users</h2>
+            <div id="userListContainer">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Joined Date</th>
+                            <th>Total Chats</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Users will be loaded here -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 3rem;">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const tbody = document.getElementById('userTableBody');
+                    if (data.users.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No users found.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.users.map(user => {
+                        const initials = user.full_name ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) : 'U';
+                        const date = new Date(user.created_at).toLocaleDateString();
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <div class="avatar-circle">${initials}</div>
+                                        <span style="font-weight: 500;">${user.full_name || 'Anonymous'}</span>
+                                    </div>
+                                </td>
+                                <td>${user.email}</td>
+                                <td>${date}</td>
+                                <td><span class="status-pill">${user.chat_count} chats</span></td>
+                                <td><span style="color: var(--success);">● Active</span></td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    </script>
+</body>
+
+</html>

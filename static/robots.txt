@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /chat
+Disallow: /api/
+Disallow: /logout
+
+Sitemap: https://neuralquery.ai/sitemap.xml

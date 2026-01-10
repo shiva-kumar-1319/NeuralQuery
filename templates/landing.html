@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="NeuralQuery - The premier AI-powered research assistant. Synthesize accurate, multi-source answers with a clean, ChatGPT-like interface.">
+    <meta name="keywords"
+        content="AI Research, Machine Learning, NeuralQuery, Search Assistant, Gemini AI, Research Tool">
+    <meta name="author" content="NeuralQuery Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://neuralquery.ai/">
+    <meta property="og:title" content="NeuralQuery - AI-Powered Research Assistant">
+    <meta property="og:description"
+        content="Get comprehensive, accurate research answers synthesized from multiple sources using advanced AI technology.">
+    <meta property="og:image" content="/static/img/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://neuralquery.ai/">
+    <meta property="twitter:title" content="NeuralQuery - AI-Powered Research Assistant">
+    <meta property="twitter:description"
+        content="Get comprehensive, accurate research answers synthesized from multiple sources using advanced AI technology.">
+    <meta property="twitter:image" content="/static/img/og-image.jpg">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "NeuralQuery",
+      "operatingSystem": "Web",
+      "applicationCategory": "ResearchApplication",
+      "description": "AI-powered research assistant that synthesizes information from multiple web sources using Google Gemini AI.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <title>NeuralQuery - AI Research Assistant | Intelligent Multi-Source Analysis</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Landing Page Specific Styles */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,100 Q300,200 600,100 T1200,100 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.05)"/></svg>') no-repeat bottom;
+            background-size: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-2xl);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: var(--space-lg);
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: var(--space-2xl);
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .hero .btn {
+            padding: var(--space-md) var(--space-2xl);
+            font-size: var(--text-lg);
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        }
+
+        .hero .btn-primary {
+            background: white;
+            color: #667eea;
+            border-color: white;
+        }
+
+        .hero .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Features Section */
+        .features {
+            padding: var(--space-3xl) 0;
+            background: var(--bg-primary);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: var(--text-3xl);
+            margin-bottom: var(--space-xl);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-xl);
+            margin-top: var(--space-2xl);
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            transition: all var(--transition-base);
+            border: 2px solid var(--border-light);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .feature-card h3 {
+            font-size: var(--text-xl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: var(--space-3xl) 0;
+            background: var(--bg-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-xl);
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: var(--text-4xl);
+            color: var(--primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-item p {
+            color: var(--text-secondary);
+            font-size: var(--text-lg);
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-2xl) 0;
+            background: var(--bg-dark);
+            color: var(--text-inverse);
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--primary-lighter);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1><img src="/static/img/logo.png" alt="NeuralQuery" style="height: 60px; vertical-align: middle;">
+                NeuralQuery</h1>
+            <p>AI-Powered Research Assistant with Multi-Source Analysis</p>
+            <p style="font-size: 1.1rem; opacity: 0.9;">
+                Get comprehensive, accurate research answers synthesized from multiple sources using advanced AI
+                technology.
+            </p>
+            <div class="hero-buttons">
+                <a href="/register" class="btn btn-primary">Get Started Free</a>
+                <a href="/login" class="btn btn-secondary">Login</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Powerful Research Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Multi-Source Search</h3>
+                    <p>Search across the web with legal DuckDuckGo API integration. Get results from multiple
+                        authoritative sources instantly.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Synthesis</h3>
+                    <p>Google Gemini AI analyzes and synthesizes information from all sources, providing clear,
+                        comprehensive answers.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Accuracy Metrics</h3>
+                    <p>Get detailed accuracy scores based on source quality, freshness, consensus, and AI confidence
+                        levels.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📁</div>
+                    <h3>Document Analysis</h3>
+                    <p>Upload PDF, DOC, DOCX, or TXT files and get AI-powered analysis and answers about your documents.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Chat Interface</h3>
+                    <p>Clean, modern ChatGPT-style interface with conversation history and easy navigation.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure & Private</h3>
+                    <p>Your data is protected with JWT authentication, bcrypt password hashing, and secure file
+                        handling.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>8-10</h3>
+                    <p>Sources Per Query</p>
+                </div>
+                <div class="stat-item">
+                    <h3>85%+</h3>
+                    <p>Average Accuracy</p>
+                </div>
+                <div class="stat-item">
+                    <h3>10MB</h3>
+                    <p>Max File Size</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Free to Use</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="hero" style="min-height: 50vh;">
+        <div class="hero-content">
+            <h2 style="font-size: 2.5rem; margin-bottom: var(--space-lg);"><img src="/static/img/logo.png" alt="Logo"
+                    style="height: 50px; vertical-align: middle; filter: brightness(0) invert(1);"> Ready to supercharge
+                your research?</h2>
+            <p style="font-size: 1.2rem;">Join NeuralQuery today and start getting intelligent, synthesized answers from
+                multiple sources.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="btn btn-primary">Create Free Account</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 NeuralQuery. Built with Flask, Gemini AI, and DuckDuckGo Search.</p>
+            <p style="margin-top: var(--space-sm); font-size: var(--text-sm); opacity: 0.8;">
+                Portfolio Project | <a href="https://github.com/yourusername/neuralquery">GitHub</a> |
+                <a href="/api/health">API Status</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
