@@ -17,7 +17,9 @@ class Config:
     """
     
     # Database Configuration
-    DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://localhost/neuralquery')
+    _raw_db_url = os.getenv('DATABASE_URL', 'postgresql://localhost/neuralquery')
+    # Handle Render/Heroku providing postgres:// instead of postgresql://
+    DATABASE_URL = _raw_db_url.replace('postgres://', 'postgresql://') if _raw_db_url else _raw_db_url
     
     # AI API Configuration
     GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
