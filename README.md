@@ -105,21 +105,7 @@ psql -U postgres -d neuralquery -f schema.sql
 python models.py
 ```
 
-### 4. Create Test Users (Optional)
-
-```bash
-# Create 50 test users with sample conversations
-python create_test_users.py
-
-# Or create a custom number:
-python create_test_users.py 10
-```
-
-**Test User Credentials:**
-- Email: `user1@test.com` through `user50@test.com`  
-- Password: `test123`
-
-### 5. Run the Application
+### 4. Run the Application
 
 ```bash
 # Start the Flask server
@@ -292,8 +278,6 @@ neuralquery/
 ├── accuracy.py               # Accuracy calculation logic
 ├── requirements.txt          # Python dependencies
 ├── schema.sql               # PostgreSQL database schema
-├── create_test_users.py     # Test data generation
-├── .env                     # Environment variables (not in git)
 ├── .env.example             # Environment template
 ├── .gitignore               # Git ignore rules
 ├── static/
