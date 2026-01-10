@@ -4,7 +4,7 @@ Flask-CORS==4.0.0
 Werkzeug==3.0.1
 
 # Database
-psycopg2-binary==2.9.9
+# psycopg2-binary==2.9.9 (Handled by Render/SQLAlchemy)
 SQLAlchemy==2.0.23
 
 # Authentication & Security
