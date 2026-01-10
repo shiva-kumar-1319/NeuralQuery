@@ -5,7 +5,7 @@ Werkzeug==3.0.1
 
 # Database
 # psycopg2-binary==2.9.9 (Handled by Render/SQLAlchemy)
-SQLAlchemy==2.0.23
+SQLAlchemy==2.0.35
 
 # Authentication & Security
 bcrypt==4.1.1
