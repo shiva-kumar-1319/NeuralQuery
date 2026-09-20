@@ -9,14 +9,11 @@ from typing import List, Dict, Optional
 import requests
 from bs4 import BeautifulSoup
 from duckduckgo_search import DDGS
-import google.generativeai as genai
 from newsapi import NewsApiClient
 
 from config import Config
 from accuracy import calculate_accuracy
-
-# Initialize Gemini AI (Use REST transport for better stability on some networks/Windows)
-genai.configure(api_key=Config.GEMINI_API_KEY, transport='rest')
+from llm_providers import get_llm_provider
 
 
 def search_web(query: str, max_results: int = None) -> List[Dict]:
@@ -207,7 +204,7 @@ def fetch_article_content(url: str) -> Optional[str]:
 
 def analyze_with_ai(query: str, sources: List[Dict]) -> str:
     """
-    Analyze sources using Google Gemini AI to generate comprehensive response.
+    Analyze sources using the configured LLM provider (Google Gemini or custom NeuralQuery Qwen LoRA).
     
     Args:
         query: User's research query
@@ -216,151 +213,8 @@ def analyze_with_ai(query: str, sources: List[Dict]) -> str:
     Returns:
         AI-generated analysis text
     """
-    try:
-        print("🤖 Analyzing with Gemini AI...")
-        
-        # Prepare context from sources
-        if not sources:
-            context = "Note: Web search was unavailable. Please answer this query comprehensively based on your internal knowledge only.\n\n"
-        else:
-            context = "Research Sources:\n\n"
-            
-            for i, source in enumerate(sources, 1):
-                context += f"--- Source {i}: {source['title']} ---\n"
-                context += f"URL: {source['url']}\n"
-                
-                # Use full content if available, otherwise snippet
-                if source.get('content'):
-                    context += f"Content: {source['content']}\n\n"
-                else:
-                    context += f"Summary: {source['snippet']}\n\n"
-        
-        # Create comprehensive prompt
-        prompt = f"""You are NeuralQuery, an advanced AI research assistant. Your task is to analyze multiple sources and provide a comprehensive, well-structured answer.
-
-User Query: {query}
-
-{context}
-
-Instructions:
-1. Synthesize information from ALL sources above
-2. Provide a comprehensive answer to the user's query
-3. Highlight key findings and important insights
-4. If sources present different perspectives, mention them
-5. Structure your response clearly with sections if appropriate
-6. Be objective and balanced
-7. Keep the response informative but concise (300-500 words)
-8. Use markdown formatting for better readability
-
-Provide your analysis:"""
-
-        # Configure AI model identifiers to try
-        # Prioritize 2.0 and stable identifiers discovered via API
-        model_names = [
-            'models/gemini-2.0-flash',
-            'models/gemini-flash-latest',
-            'models/gemini-pro-latest',
-            'models/gemini-2.0-flash-lite-preview',
-            'models/gemini-1.5-flash-latest',
-            'models/gemma-3-27b-it' # Guaranteed fallback found in diagnostic
-        ]
-        
-        last_error = "No models attempted"
-        ai_text = None
-        
-        for name in model_names:
-            try:
-                print(f"🤖 Attempting generation with: {name}")
-                model = genai.GenerativeModel(name)
-                
-                # Attempt generation with fallback for request_options
-                try:
-                    response = model.generate_content(
-                        prompt,
-                        generation_config=genai.types.GenerationConfig(
-                            max_output_tokens=Config.AI_MAX_TOKENS,
-                            temperature=Config.AI_TEMPERATURE,
-                        ),
-                        request_options={"timeout": Config.AI_REQUEST_TIMEOUT}
-                    )
-                except Exception as e:
-                    # Handle cases where library version doesn't support request_options
-                    if "request_options" in str(e) or "unexpected keyword" in str(e).lower():
-                        response = model.generate_content(
-                            prompt,
-                            generation_config=genai.types.GenerationConfig(
-                                max_output_tokens=Config.AI_MAX_TOKENS,
-                                temperature=Config.AI_TEMPERATURE,
-                            )
-                        )
-                    else:
-                        raise e
-                
-                # Check for finish_reason and blocked content
-                if response.candidates:
-                    candidate = response.candidates[0]
-                    if candidate.finish_reason != 1: # 1 is SUCCESS/STOP
-                        print(f"⚠️ Model {name} stopped early: {candidate.finish_reason}")
-                        # If blocked, try next model
-                        if candidate.finish_reason == 3: # BLOCKED_FOR_SAFETY
-                            continue
-                
-                ai_text = response.text
-                if ai_text:
-                    print(f"✅ Success with model {name}")
-                    break
-            except Exception as e:
-                last_error = str(e)
-                print(f"⚠️ Model {name} failed: {last_error[:100]}")
-                continue
-        
-        if not ai_text:
-            raise Exception(f"All AI models failed. Last error: {last_error}")
-        
-        print(f"✅ AI analysis complete ({len(ai_text)} characters)")
-        return ai_text
-        
-    except Exception as e:
-        error_msg = str(e)
-        print(f"❌ AI analysis error: {error_msg}")
-        
-        # Check for quota/rate limit errors
-        is_quota_error = "429" in error_msg or "quota" in error_msg.lower() or "limit" in error_msg.lower()
-        
-        friendly_error = ""
-        if is_quota_error:
-            friendly_error = "**Note:** NeuralQuery is currently at its limit for free research (Quota Exceeded). This usually resets in about 30-60 seconds. Please try again in a moment."
-        else:
-            friendly_error = f"I apologize, but I encountered an error while analyzing the sources: {error_msg}"
-
-        # If we have sources, show them even if AI failed
-        if sources:
-            source_list = "\n".join([f"- {s['title']}: {s['url']}" for s in sources[:5]])
-            return f"""{friendly_error}
-
-However, I found {len(sources)} relevant sources that might help answer your query:
-
-{source_list}"""
-        
-        # If we have NO sources and AI failed (fallback mode failed)
-        if is_quota_error:
-            return f"""**AI Quota Exceeded**
-            
-NeuralQuery has reached its temporary limit for AI analysis. 
-
-**Suggestions:**
-1. **Wait 1 minute** (The free tier limit is 2-15 requests per minute)
-2. Try asking your question again in a moment
-3. If this persists, verify your `GEMINI_API_KEY` in `.env`"""
-
-        return f"""**Research Update:**
-        
-I couldn't search the live web right now (DuckDuckGo rate limit) and encountered an issue connecting to the AI model ({error_msg}).
-
-**Suggestions:**
-1. Wait a moment and try again
-2. Verify your `GEMINI_API_KEY` in `.env`
-3. Try asking a simpler question"""
+    provider = get_llm_provider()
+    return provider.generate(query, sources)
 
 
 def perform_research(query: str) -> Dict:

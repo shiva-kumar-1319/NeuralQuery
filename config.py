@@ -66,11 +66,21 @@ class Config:
     REQUEST_DELAY = 1  # Delay between requests in seconds (be respectful)
     USER_AGENT = 'NeuralQuery/1.0 (Educational Research Assistant)'
     
-    # AI Settings
-    AI_MAX_TOKENS = 2048  # Maximum tokens for AI response
-    AI_TEMPERATURE = 0.7  # AI response creativity (0.0 - 1.0)
-    AI_REQUEST_TIMEOUT = 120  # Timeout for AI requests in seconds
-    AI_DEFAULT_MODEL = 'models/gemini-2.0-flash'  # Verified to exist
+    # AI Provider Settings
+    # Supported providers: 'gemini', 'neuralquery'
+    MODEL_PROVIDER = os.getenv('MODEL_PROVIDER', 'gemini').lower()
+    
+    # Custom NeuralQuery LLM (Qwen2.5-1.5B + LoRA Adapter)
+    NEURALQUERY_BASE_MODEL = os.getenv('NEURALQUERY_BASE_MODEL', 'Qwen/Qwen2.5-1.5B-Instruct')
+    NEURALQUERY_ADAPTER_PATH = os.getenv('NEURALQUERY_ADAPTER_PATH', 'model/neuralquery-production-adapter')
+    NEURALQUERY_DEVICE = os.getenv('NEURALQUERY_DEVICE', 'auto').lower()  # 'auto', 'cuda', 'cpu', 'mps'
+    NEURALQUERY_FALLBACK_TO_GEMINI = os.getenv('NEURALQUERY_FALLBACK_TO_GEMINI', 'false').lower() == 'true'
+
+    # AI Generation Settings
+    AI_MAX_TOKENS = int(os.getenv('AI_MAX_TOKENS', 2048))  # Maximum tokens for AI response
+    AI_TEMPERATURE = float(os.getenv('AI_TEMPERATURE', 0.7))  # AI response creativity (0.0 - 1.0)
+    AI_REQUEST_TIMEOUT = int(os.getenv('AI_REQUEST_TIMEOUT', 120))  # Timeout for AI requests in seconds
+    AI_DEFAULT_MODEL = os.getenv('AI_DEFAULT_MODEL', 'models/gemini-2.0-flash')  # Gemini default model
     
     @staticmethod
     def validate():
@@ -78,11 +88,24 @@ class Config:
         Validate required configuration settings.
         Raises an exception if critical settings are missing.
         """
-        if not Config.GEMINI_API_KEY:
-            raise ValueError(
-                "GEMINI_API_KEY is required. "
-                "Get your API key from https://makersuite.google.com/app/apikey"
-            )
+        # Validate Gemini key only if Gemini provider is selected or fallback is enabled
+        requires_gemini = (Config.MODEL_PROVIDER == 'gemini' or Config.NEURALQUERY_FALLBACK_TO_GEMINI)
+        if requires_gemini and not Config.GEMINI_API_KEY:
+            if Config.MODEL_PROVIDER == 'gemini':
+                raise ValueError(
+                    "GEMINI_API_KEY is required when MODEL_PROVIDER=gemini. "
+                    "Get your API key from https://makersuite.google.com/app/apikey"
+                )
+            else:
+                print("⚠️  Warning: NEURALQUERY_FALLBACK_TO_GEMINI is enabled but GEMINI_API_KEY is not set.")
+
+        if Config.MODEL_PROVIDER == 'neuralquery':
+            # Check if adapter path exists
+            if not os.path.exists(Config.NEURALQUERY_ADAPTER_PATH):
+                print(
+                    f"⚠️  NeuralQuery adapter directory not found at '{Config.NEURALQUERY_ADAPTER_PATH}'. "
+                    f"Ensure adapter files are placed in this path before invoking NeuralQuery provider."
+                )
         
         if Config.JWT_SECRET == 'dev-secret-change-in-production' and \
            Config.FLASK_ENV == 'production':

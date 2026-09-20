@@ -11,10 +11,24 @@ ENV/
 
 # Environment variables
 .env
+*.env.local
 
 # Uploads
 uploads/*
 !uploads/README.md
+
+# Model weights & Checkpoints (Large files - do not commit weights directly)
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+model/**/adapter_model.safetensors
+model/**/adapter_model.bin
+training/checkpoints/
+training/runs/
+.cache/
+hf_cache/
 
 # IDE
 .vscode/
