@@ -15,8 +15,6 @@ PyJWT==2.8.0
 duckduckgo-search>=8.1.1  # Free, no API key needed!
 requests==2.31.0
 beautifulsoup4==4.12.2
-lxml>=5.3.0
-requests-html==0.10.0
 newsapi-python==0.2.7
 
 # AI Integration - Google Gemini (Cloud API)

@@ -239,12 +239,17 @@ NeuralQuery/
 ├── models.py                       # SQLAlchemy ORM models (User, Conversation, Message)
 ├── config.py                       # Centralized configuration & environment loader
 ├── requirements.txt                # Project dependencies
-├── schema.sql                      # Database relational schema definition
 ├── wsgi.py                         # WSGI production entry point
 ├── run_production.py               # Waitress production server launcher
 ├── render.yaml                     # Cloud deployment configuration
+├── Procfile                        # Container / Heroku process declaration
 ├── .env.example                    # Environment variable template
 ├── .gitignore                      # Git tracking rules (excludes large weights)
+│
+├── tests/                          # Automated unit & integration test suite
+│   ├── test_accuracy.py            # Accuracy & citation heuristic tests
+│   ├── test_providers.py           # Provider selection, prompt & error tests
+│   └── test_config.py              # Configuration validation tests
 │
 ├── model/
 │   └── neuralquery-production-adapter/

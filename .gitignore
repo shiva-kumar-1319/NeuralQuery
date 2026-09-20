@@ -15,7 +15,7 @@ ENV/
 
 # Uploads
 uploads/*
-!uploads/README.md
+!uploads/.gitkeep
 
 # Model weights & Checkpoints (Large files - do not commit weights directly)
 *.safetensors
